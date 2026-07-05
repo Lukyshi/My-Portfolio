@@ -4,9 +4,6 @@ import HeroBadge from './components/HeroBadge';
 import About from './components/About';
 import TechStack from './components/TechStack';
 import Projects from './components/Projects';
-import ApiShowcase from './components/ApiShowcase';
-import Architecture from './components/Architecture';
-import DatabaseDesign from './components/DatabaseDesign';
 import SkillsConcepts from './components/SkillsConcepts';
 import Experience from './components/Experience';
 import GithubSection from './components/GithubSection';
@@ -40,7 +37,7 @@ export default function App() {
 
   return (
     <div className="app-container">
-      {/* Top Navbar */}
+      {/* Top Navbar — simplified to 6 items */}
       <nav className="navbar">
         <div className="navbar-container">
           <div className="logo-container">
@@ -70,22 +67,7 @@ export default function App() {
             </li>
             <li>
               <a href="#projects" className="nav-link" onClick={handleLinkClick}>
-                Projects
-              </a>
-            </li>
-            <li>
-              <a href="#api" className="nav-link" onClick={handleLinkClick}>
-                API
-              </a>
-            </li>
-            <li>
-              <a href="#architecture" className="nav-link" onClick={handleLinkClick}>
-                Architecture
-              </a>
-            </li>
-            <li>
-              <a href="#database" className="nav-link" onClick={handleLinkClick}>
-                Database
+                Work
               </a>
             </li>
             <li>
@@ -96,16 +78,6 @@ export default function App() {
             <li>
               <a href="#experience" className="nav-link" onClick={handleLinkClick}>
                 Timeline
-              </a>
-            </li>
-            <li>
-              <a href="#github" className="nav-link" onClick={handleLinkClick}>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="#certifications" className="nav-link" onClick={handleLinkClick}>
-                Certificates
               </a>
             </li>
             <li>
@@ -123,9 +95,6 @@ export default function App() {
         <About />
         <TechStack />
         <Projects />
-        <ApiShowcase />
-        <Architecture />
-        <DatabaseDesign />
         <SkillsConcepts />
         <Experience />
         <GithubSection />

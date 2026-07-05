@@ -1,35 +1,57 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Github, Linkedin, Download } from 'lucide-react';
 
 export default function HeroBadge() {
   const badgeRef = useRef(null);
-  const [rotate, setRotate] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
+  const wrapperRef = useRef(null);
+  const [dragging, setDragging] = useState(false);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [originPos, setOriginPos] = useState({ x: 0, y: 0 });
 
-  const handleMouseMove = (e) => {
-    if (!badgeRef.current) return;
+  const handlePointerDown = useCallback((e) => {
+    e.preventDefault();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
-    const rect = badgeRef.current.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
+    setDragging(true);
+    setDragStart({ x: clientX - offset.x, y: clientY - offset.y });
+  }, [offset]);
 
-    const mouseX = e.clientX - rect.left - width / 2;
-    const mouseY = e.clientY - rect.top - height / 2;
+  const handlePointerMove = useCallback((e) => {
+    if (!dragging) return;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
-    const rotateX = -(mouseY / (height / 2)) * 12;
-    const rotateY = (mouseX / (width / 2)) * 12;
+    const newX = clientX - dragStart.x;
+    const newY = clientY - dragStart.y;
+    setOffset({ x: newX, y: newY });
+  }, [dragging, dragStart]);
 
-    setRotate({ x: rotateX, y: rotateY });
-  };
+  const handlePointerUp = useCallback(() => {
+    if (!dragging) return;
+    setDragging(false);
+    // Spring back to origin
+    setOffset({ x: 0, y: 0 });
+  }, [dragging]);
 
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    setRotate({ x: 0, y: 0 });
-  };
+  useEffect(() => {
+    // Attach global listeners for move/up so dragging works outside the badge
+    window.addEventListener('mousemove', handlePointerMove);
+    window.addEventListener('mouseup', handlePointerUp);
+    window.addEventListener('touchmove', handlePointerMove, { passive: false });
+    window.addEventListener('touchend', handlePointerUp);
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
+    return () => {
+      window.removeEventListener('mousemove', handlePointerMove);
+      window.removeEventListener('mouseup', handlePointerUp);
+      window.removeEventListener('touchmove', handlePointerMove);
+      window.removeEventListener('touchend', handlePointerUp);
+    };
+  }, [handlePointerMove, handlePointerUp]);
+
+  // Compute a slight rotation based on horizontal offset for realism
+  const rotateZ = Math.max(-15, Math.min(15, offset.x * 0.12));
 
   return (
     <section id="hero" className="hero-section">
@@ -59,22 +81,28 @@ export default function HeroBadge() {
       </div>
 
       <div className="hero-badge-panel">
-        <div className="lanyard-wrapper">
-          <div className="lanyard-lace" />
+        <div className="lanyard-wrapper" ref={wrapperRef}>
+          <div
+            className="lanyard-lace"
+            style={{
+              transform: `rotate(${rotateZ * 0.3}deg)`,
+              transition: dragging ? 'none' : 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            }}
+          />
           <div className="lanyard-ring" />
           <div className="lanyard-clip" />
 
           <div
             ref={badgeRef}
-            className="id-badge"
-            onMouseMove={handleMouseMove}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+            className={`id-badge ${dragging ? 'is-dragging' : ''}`}
+            onMouseDown={handlePointerDown}
+            onTouchStart={handlePointerDown}
             style={{
-              transform: isHovered
-                ? `rotateX(${rotate.x}deg) rotateY(${rotate.y}deg) translateY(4px) scale(1.03)`
-                : 'rotateX(0deg) rotateY(0deg)',
-              transition: isHovered ? 'transform 0.05s linear' : 'transform 0.5s ease',
+              transform: `translate(${offset.x}px, ${offset.y}px) rotate(${rotateZ}deg)`,
+              transition: dragging
+                ? 'none'
+                : 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              cursor: dragging ? 'grabbing' : 'grab',
             }}
           >
             <div className="id-badge-slot" />
@@ -106,15 +134,21 @@ export default function HeroBadge() {
 
             <div className="id-badge-footer">
               <div className="id-badge-links">
-                <a href="https://github.com/Lukyshi" target="_blank" rel="noopener noreferrer" className="id-badge-link" title="GitHub">
+                <a href="https://github.com/Lukyshi" target="_blank" rel="noopener noreferrer" className="id-badge-link" title="GitHub"
+                  onMouseDown={(e) => e.stopPropagation()}
+                >
                   <Github size={20} />
                 </a>
-                <a href="https://www.linkedin.com/in/luiz-bangsoy-b3aa86359/" target="_blank" rel="noopener noreferrer" className="id-badge-link" title="LinkedIn">
+                <a href="https://www.linkedin.com/in/luiz-bangsoy-b3aa86359/" target="_blank" rel="noopener noreferrer" className="id-badge-link" title="LinkedIn"
+                  onMouseDown={(e) => e.stopPropagation()}
+                >
                   <Linkedin size={20} />
                 </a>
               </div>
 
-              <a href="/resume.pdf" download="Luiz_Bangsoy_Resume.pdf" className="btn btn-primary resume-btn">
+              <a href="/resume.pdf" download="Luiz_Bangsoy_Resume.pdf" className="btn btn-primary resume-btn"
+                onMouseDown={(e) => e.stopPropagation()}
+              >
                 <Download size={16} />
                 Download Resume
               </a>

@@ -1,6 +1,6 @@
-import { Calendar } from 'lucide-react';
+import { Calendar, Briefcase, GraduationCap } from 'lucide-react';
 
-const EXPERIENCES = [
+const WORK_EXPERIENCE = [
   {
     title: 'Freelance Backend Developer',
     company: 'Independent Contracts',
@@ -11,7 +11,10 @@ const EXPERIENCES = [
       'Documented endpoints using Postman collections, improving client integration turnaround times.',
       'Configured Prisma ORM schemas, managing database migrations and table relationships.'
     ]
-  },
+  }
+];
+
+const EDUCATION = [
   {
     title: 'Department of Science and Technology (DOST) NCR Bootcamp',
     company: 'Power Up: Game Development Bootcamper',
@@ -34,17 +37,16 @@ const EXPERIENCES = [
   }
 ];
 
-export default function Experience() {
+function TimelineGroup({ title, icon, items, variant }) {
   return (
-    <section id="experience" className="glass-panel">
-      <h2 className="section-title">
-        <Calendar size={28} className="logo-dot" /> Experience Timeline
-      </h2>
-      <p className="section-subtitle">&gt; history | grep "work"</p>
-      
+    <div className="experience-group">
+      <div className="experience-group-label">
+        {icon}
+        <h3>{title}</h3>
+      </div>
       <div className="experience-timeline">
-        {EXPERIENCES.map((exp, index) => (
-          <div key={index} className="experience-item">
+        {items.map((exp, index) => (
+          <div key={index} className={`experience-item experience-item--${variant}`}>
             <div className="experience-header">
               <div>
                 <h3 className="experience-title">{exp.title}</h3>
@@ -60,6 +62,31 @@ export default function Experience() {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+export default function Experience() {
+  return (
+    <section id="experience" className="glass-panel">
+      <h2 className="section-title">
+        <Calendar size={28} className="logo-dot" /> Experience Timeline
+      </h2>
+      <p className="section-subtitle">&gt; history | grep "work"</p>
+
+      <TimelineGroup
+        title="Work Experience"
+        icon={<Briefcase size={18} />}
+        items={WORK_EXPERIENCE}
+        variant="work"
+      />
+
+      <TimelineGroup
+        title="Education & Training"
+        icon={<GraduationCap size={18} />}
+        items={EDUCATION}
+        variant="education"
+      />
     </section>
   );
 }

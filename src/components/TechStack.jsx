@@ -1,5 +1,8 @@
 import { Cpu } from 'lucide-react';
 
+// Official Cursor IDE logo as inline SVG data URI
+const CURSOR_LOGO = `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 110" fill="none"><rect width="110" height="110" rx="24" fill="#000"/><path d="M27 82V28l56 27-22 9.5L75 82l-12 5-14-17.5L27 82Z" fill="#fff"/><path d="M61 64.5L75 82l-12 5-14-17.5" fill="#999"/></svg>`)}`;
+
 const TECH_ITEMS = [
   { name: 'Java', className: 'tech-java', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg' },
   { name: 'Spring Boot', className: 'tech-spring', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg' },
@@ -13,7 +16,7 @@ const TECH_ITEMS = [
   { name: 'VS Code', className: 'tech-vscode', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg' },
   { name: 'IntelliJ', className: 'tech-intellij', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/intellij/intellij-original.svg' },
   { name: 'Eclipse', className: 'tech-eclipse', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/eclipse/eclipse-original.svg' },
-  { name: 'Cursor', className: 'tech-cursor', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cursor/cursor-original.svg' }
+  { name: 'Cursor', className: 'tech-cursor', src: CURSOR_LOGO }
 ];
 
 export default function TechStack() {
