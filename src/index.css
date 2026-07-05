@@ -452,84 +452,134 @@ code {
 .hero-badge-panel {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
+  perspective: 1200px;
+  position: relative;   /* ADD THIS */
+  min-height: 520px;    /* ADD THIS - reserves space for badge+lace */
 }
 
 .lanyard-wrapper {
-  position: relative;
+  position: absolute;   /* CHANGED from fixed */
+  top: 0;                /* CHANGED from 65px - now relative to hero panel */
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  perspective: 1000px;
-  margin-bottom: 20px;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  z-index: 5;
 }
 
-/* Lanyard Lace */
+.lanyard-wrapper > * {
+  pointer-events: auto;
+}
+
+/* Lanyard anchor point - now attached to navbar bottom via fixed positioning */
+.lanyard-anchor {
+  display: none;
+}
+
+/* Lanyard Laces - Left and Right */
 .lanyard-lace {
-  width: 8px;
-  height: 90px;
-  background: linear-gradient(180deg, #ff4444 0%, #dd0000 40%, #cc0000 100%);
-  box-shadow: inset 1px 0 3px rgba(0,0,0,0.6);
-  border-radius: 4px;
-  transform-origin: top center;
+  width: 10px;
+  background: linear-gradient(90deg, #dc2626 0%, #ef4444 25%, #b91c1c 75%, #dc2626 100%);
+  box-shadow: inset 1px 0 2px rgba(255, 255, 255, 0.3), inset -1px 0 2px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-left: -5px;
   z-index: 2;
+}
+
+.lanyard-lace-left {
+  /* transform offset handled in inline style */
+}
+
+.lanyard-lace-right {
+  /* transform offset handled in inline style */
+}
+
+/* Badge container that moves with drag */
+.id-badge-container {
   position: relative;
+  z-index: 4;
+  margin-top: 90px;
+  perspective: 1200px;
+  margin-left: 0;
+  margin-right: 0;
 }
 
-/* Ring connecting lanyard to badge */
-.lanyard-ring {
-  width: 20px;
-  height: 20px;
-  border: 3px solid #3f3f46;
-  border-radius: 50%;
-  background: transparent;
-  position: absolute;
-  top: 80px;
-  z-index: 3;
+.id-badge-container.is-dragging {
+  z-index: 6;
 }
 
-.lanyard-clip {
-  width: 12px;
-  height: 16px;
-  background: #52525b;
-  border-radius: 2px;
-  position: absolute;
-  top: 92px;
-  z-index: 3;
-}
-
-/* Hanging Badge Card */
+/* Main Badge Card with 3D Flip */
 .id-badge {
   width: 290px;
+  height: 380px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
-  padding: 20px;
-  margin-top: 18px;
   position: relative;
-  transform-origin: top center;
-  z-index: 4;
-  cursor: grab;
+  transform-style: preserve-3d;
+  cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
+  transition: transform 0.6s ease-out;
 }
 
 .id-badge.is-dragging {
   cursor: grabbing;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 20px 60px rgba(108, 78, 78, 0.9);
   border-color: var(--text-primary);
+}
+
+/* Front and Back faces of badge */
+.id-badge-front,
+.id-badge-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  backface-visibility: hidden;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.id-badge-front {
+  padding: 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  z-index: 1;
+}
+
+.id-badge-back {
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  transform: rotateY(180deg);
+  z-index: 0;
+  padding: 20px;
 }
 
 /* Lanyard slot hole at top of badge */
 .id-badge-slot {
-  width: 32px;
-  height: 8px;
+  width: 30px;
+  height: 6px;
   background: var(--bg-primary);
-  border-radius: 4px;
-  margin: -10px auto 14px auto;
+  border-radius: 3px;
+  margin: 0 auto 10px auto;
   border: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
 
 /* Top bar style on card */
@@ -538,8 +588,9 @@ code {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--border-color);
-  padding-bottom: 10px;
-  margin-bottom: 14px;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+  font-size: 0.8rem;
 }
 
 .badge-logo {
@@ -560,10 +611,10 @@ code {
 
 /* Avatar layout */
 .id-badge-avatar-container {
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   border-radius: var(--radius-md);
-  margin: 0 auto 14px auto;
+  margin: 0 auto 12px auto;
   border: 1px solid var(--border-color);
   overflow: hidden;
   background: var(--bg-primary);
@@ -571,33 +622,38 @@ code {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .id-badge-avatar {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Full-color profile picture — no grayscale filter */
+  opacity: 0.95;
 }
 
 .id-badge-info {
-  margin-bottom: 14px;
+  margin-bottom: 0;
+  text-align: center;
 }
 
 .id-badge-name {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 2px;
+  text-align: center;
+  line-height: 1.2;
 }
 
 .id-badge-title {
   font-family: var(--font-mono);
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  text-align: center;
 }
 
 .id-badge-footer {
@@ -607,6 +663,7 @@ code {
   flex-direction: column;
   gap: 8px;
   align-items: center;
+  margin-top: auto;
 }
 
 .id-badge-links {
@@ -631,7 +688,46 @@ code {
   border-color: var(--text-primary);
 }
 
-/* Sway animations removed — badge now uses drag interaction */
+/* QR Code Back Side */
+.qr-code-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+.qr-code-image {
+  width: 200px;
+  height: 200px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 8px;
+}
+
+.id-badge-flip-btn {
+  background: var(--accent-blue);
+  color: var(--bg-primary);
+  border: none;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition);
+}
+
+.id-badge-flip-btn:hover {
+  background: rgba(244, 244, 245, 0.9);
+  transform: scale(1.05);
+}
 
 /* Responsive query for Hero */
 @media (max-width: 900px) {
