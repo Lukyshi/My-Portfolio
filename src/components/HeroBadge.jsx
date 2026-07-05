@@ -52,6 +52,9 @@ export default function HeroBadge() {
 
   // Compute a slight rotation based on horizontal offset for realism
   const rotateZ = Math.max(-15, Math.min(15, offset.x * 0.12));
+  
+  // Compute lace stretch: increases height as badge moves down
+  const laceStretch = Math.max(1, 1 + (offset.y * 0.003));
 
   return (
     <section id="hero" className="hero-section">
@@ -81,11 +84,18 @@ export default function HeroBadge() {
       </div>
 
       <div className="hero-badge-panel">
-        <div className="lanyard-wrapper" ref={wrapperRef}>
+        <div 
+          className="lanyard-wrapper" 
+          ref={wrapperRef}
+          style={{
+            transform: `translate(${offset.x}px, ${offset.y}px)`,
+            transition: dragging ? 'none' : 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          }}
+        >
           <div
             className="lanyard-lace"
             style={{
-              transform: `rotate(${rotateZ * 0.3}deg)`,
+              transform: `rotate(${rotateZ * 0.3}deg) scaleY(${laceStretch})`,
               transition: dragging ? 'none' : 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
             }}
           />
@@ -98,7 +108,7 @@ export default function HeroBadge() {
             onMouseDown={handlePointerDown}
             onTouchStart={handlePointerDown}
             style={{
-              transform: `translate(${offset.x}px, ${offset.y}px) rotate(${rotateZ}deg)`,
+              transform: `rotate(${rotateZ}deg)`,
               transition: dragging
                 ? 'none'
                 : 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',

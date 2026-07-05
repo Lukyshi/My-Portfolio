@@ -13,19 +13,36 @@ import Contact from './components/Contact';
 export default function App() {
   const [menuActive, setMenuActive] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
-  // Handle scroll listener for Back-to-Top visibility
+  // Handle scroll listener for Back-to-Top visibility and navbar hide/show
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 400) {
+      const currentScrollY = window.scrollY;
+
+      // Show scroll-to-top button after scrolling down 400px
+      if (currentScrollY > 400) {
         setShowScrollTop(true);
       } else {
         setShowScrollTop(false);
       }
+
+      // Hide navbar when scrolling down, show when scrolling up
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling down
+        setShowNavbar(false);
+      } else {
+        // Scrolling up
+        setShowNavbar(true);
+      }
+
+      setLastScrollY(currentScrollY);
     };
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -38,7 +55,7 @@ export default function App() {
   return (
     <div className="app-container">
       {/* Top Navbar — simplified to 6 items */}
-      <nav className="navbar">
+      <nav className={`navbar ${showNavbar ? 'navbar-visible' : 'navbar-hidden'}`}>
         <div className="navbar-container">
           <div className="logo-container">
             <span className="logo-slash">&lt;</span>
